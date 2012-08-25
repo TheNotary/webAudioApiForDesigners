@@ -22,7 +22,7 @@ function initializeNewWebAudioContext(){
 // the buffer that you plan to store the sound data in...  
 // It's almost meta, but still javascript
 webkitAudioContext.prototype.loadSound = function (url, strNameOfSoundBufferVariable) {
-  context = this;
+  var context = this;
   var request = new XMLHttpRequest();
   request.open('GET', url, true);
   request.responseType = 'arraybuffer';
@@ -37,10 +37,11 @@ webkitAudioContext.prototype.loadSound = function (url, strNameOfSoundBufferVari
 }
 
 function onError(){
-  alert('something suboptimal happened');
+  alert('something suboptimal happened while attempting to decode some audioData.');
 }
 
 webkitAudioContext.prototype.playSound = function(strBuffer) {
+  var context = this;
   buffer = this.buffers[strBuffer];  // get the audio buffer by it's name
   
   var source = context.createBufferSource(); // creates a sound source
