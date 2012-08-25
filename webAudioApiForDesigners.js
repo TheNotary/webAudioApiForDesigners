@@ -12,7 +12,7 @@ function initializeNewWebAudioContext(){
     //context = new fallbackAudioContext();
   }
   catch(e) {
-    alert('Web Audio API is not supported in this browser.  HTML 5 Audio Elements will be used instead.');
+    // alert('Web Audio API is not supported in this browser.  HTML 5 Audio Elements will be used instead.');
     context = new fallbackAudioContext();
   }
   return context;
