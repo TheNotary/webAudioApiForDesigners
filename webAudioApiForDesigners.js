@@ -1,15 +1,19 @@
 // We need to check if this system has the webAudioContext defined.  
 // As of right now chrome will, but firefox won't because they just started implimenting
-if (typeof(webkitAudioContext) == "undefined"){
+if (typeof(webkitAudioContext) == "undefined") {
   window.webkitAudioContext = function(){throw "Web Audio API not supported in this browser";};
 }
 
-function initializeNewWebAudioContext(){
+function initializeNewWebAudioContext() {
   var context; // this is our web audio context, our way of 
                // keeping track all of our sounds.  
   try {
-    context = new webkitAudioContext();
-    //context = new fallbackAudioContext();
+    if (typeof(mozAudioContext) != "undefined") {
+      context = new mozAudioContext();
+    }
+    else{
+      context = new webkitAudioContext();
+    }
   }
   catch(e) {
     // alert('Web Audio API is not supported in this browser.  HTML 5 Audio Elements will be used instead.');
@@ -36,7 +40,7 @@ webkitAudioContext.prototype.loadSound = function (url, strNameOfSoundBufferVari
   request.send();
 }
 
-function onError(){
+function onError() {
   alert('something suboptimal happened while attempting to decode some audioData.');
 }
 
@@ -56,19 +60,19 @@ webkitAudioContext.prototype.buffers = {};
 
 // The fallback context is used on browsers that don't use webkitAudioContext.
 // In the case of a fallback, html5 audio will be used instead
-function fallbackAudioContext(){
+function fallbackAudioContext() {
   this.buffers = {};
   //this.buffersIndecies = {};
 }
 
-function fallbackAudioEntity(url){
+function fallbackAudioEntity(url) {
   this.audioElement = new Audio(url);  // Place the audio element here
   this.tracks = {};  // .play() multiple audio elements simultaniously in this tracks collection.  It's gc friendly
   this.audioBufferIndex = 0;  // these help us keep track of the new Audio() elements we create so
   this.maxSoundsAtOnce = 32;  // they garbage collect a tiny bit easier
 }
 
-fallbackAudioEntity.prototype.playNew = function(){
+fallbackAudioEntity.prototype.playNew = function() {
   var i = this.audioBufferIndex;
   
   if (typeof(this.tracks[i]) != 'undefined')
@@ -83,7 +87,7 @@ fallbackAudioEntity.prototype.playNew = function(){
     this.audioBufferIndex = 0;
 }
 
-fallbackAudioContext.prototype.loadSound = function(url, strNameOfSoundBufferVariable){
+fallbackAudioContext.prototype.loadSound = function(url, strNameOfSoundBufferVariable) {
   this.buffers[strNameOfSoundBufferVariable] = new fallbackAudioEntity(url);
 }
 
