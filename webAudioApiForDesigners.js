@@ -5,8 +5,8 @@ if (typeof(webkitAudioContext) == "undefined" && typeof(mozAudioContext) == "und
 }
 
 function initializeNewWebAudioContext() {
-  var context; // this is our web audio context, our way of 
-               // keeping track all of our sounds.  
+  var context; // this is our web audio context, our way of
+               // controlling and keeping track all of our sounds.  
   try {
     if (typeof(mozAudioContext) != "undefined") {
       context = new mozAudioContext();
