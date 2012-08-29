@@ -1,6 +1,6 @@
 // We need to check if this system has the webAudioContext defined.  
 // As of right now chrome will, but firefox won't because they just started implimenting
-if (typeof(webkitAudioContext) == "undefined") {
+if (typeof(webkitAudioContext) == "undefined" && typeof(mozAudioContext) == "undefined") {
   window.webkitAudioContext = function(){throw "Web Audio API not supported in this browser";};
 }
 
