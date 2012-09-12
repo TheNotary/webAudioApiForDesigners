@@ -17,7 +17,7 @@
   
 	<div id="page-wrap">
 	
-		<header><div class="inside">
+		<header><div class="inside">You can read the <a href='http://css-tricks.com/web-audio-api-sound-on-hover'>full article</a> at css-tricks.com.
 			<h1>Play Audio on :hover</h1>
 			
 			<p>We're going to use the Web Audio API here, no Flash, no HTML 5 audio elements. We'll need a respectable browser that isn't trying to kill off the internet (not IE).  We'll use a very light weight javascript library to make using the Web Audio API that much easier.  </p>
@@ -44,9 +44,11 @@
 		</ul>
 		
 		<script>var context = initializeNewWebAudioContext();
- context.loadSound('audio/beep.ogg', 'beep');
+// context.loadSound('audio/beep.ogg', 'beep');
 // context.loadFallbackSound('audio/beep.mp3', 'beep');  // this is for Safari
-// context.loadSound(['audio/beep.ogg', 'audio/beep.mp3'], 'beep');
+
+// new!  Now you can pass in an array containing an mp3 and an ogg file to handle fallbacks for safari
+context.loadSound(['audio/beep.ogg', 'audio/beep.mp3'], 'beep');    
 
 $("#nav-one a")
 	.mouseenter(function() {
