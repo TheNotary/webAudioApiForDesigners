@@ -1,3 +1,9 @@
+// Browser detection required (guess which browsers are at faul =P)
+var isSafari = navigator.userAgent.indexOf("Safari") != -1;
+var isIe = navigator.userAgent.indexOf("MSIE") != -1;
+var isFireFox = navigator.userAgent.indexOf("Firefox") != -1; // not this one ^^
+
+
 // We need to check if this system has the webAudioContext defined.  
 // As of right now chrome will, but firefox won't because they just started implimenting
 if (typeof(webkitAudioContext) == "undefined" && typeof(mozAudioContext) == "undefined") {
@@ -23,7 +29,7 @@ function initializeNewWebAudioContext(enableIe) {
   }
   catch(e) {
     // alert('Web Audio API is not supported in this browser.  HTML 5 Audio Elements will be used instead.');
-    if (isIe() && !enableIe){
+    if (isIe && !enableIe){
       disableSoundFallback();
     }
       
@@ -36,7 +42,7 @@ function initializeNewWebAudioContext(enableIe) {
 
 // this is useful for IE...
 function disableSoundFallback(){
-  if(isIe()){
+  if(isIe){
     alert("Relevant audio is being disabled for your browser, probably because your browser (IE) is not capable of playing back sound at a reasonable latency.  \n\nEven though you are using Microsoft Windows as an Operating system, you are still able to access the web the way the rest of the world can by downloading an alternative browser.  \n\nConsider web searching for:  Opera, Firefox or Chrome.");
   }
   
@@ -146,15 +152,7 @@ webkitAudioContext.prototype.playSound = function(strBuffer) {
   source.noteOn(0);                          // play the audio source zero seconds from now
 }
 
-// check if the browser is Safari...
-function isSafari() {
-  return navigator.userAgent.indexOf("Safari") != -1;
-}
 
-// IE throws up when we check isSafari...
-function isIe(){
-  return navigator.userAgent.indexOf("MSIE") != -1;
-}
 
 // We need a place to store our audio buffers.  
 // May as well pin them here, directly to the context
@@ -183,10 +181,10 @@ function fallbackAudioEntity(url) {
 fallbackAudioEntity.prototype.playNew = function() {
   var i = this.audioBufferIndex;
   
-  if (typeof(this.tracks[i]) != 'undefined')
+  if (typeof(this.tracks[i]) != 'undefined' && !isFireFox)
     this.tracks[i].src = '';  // minimize memory usage... and smoothness too???
   this.tracks[i] = this.audioElement.cloneNode(true);
-  if (isIe()) { this.tracks[i].src = 'audio/beep.mp3'; } //  lol, IE9s performance is ridiculous, what a waste of time
+  if (isIe) { this.tracks[i].src = 'audio/beep.mp3'; } //  lol, IE9s performance is ridiculous, what a waste of time
   this.tracks[i].play();
   
   // this stuff is done to prevent "memory leaking" in browsers, which causes a 
@@ -199,7 +197,7 @@ fallbackAudioEntity.prototype.playNew = function() {
 fallbackAudioContext.prototype.loadSound = function(url, strNameOfSoundBufferVariable) {
   if (url instanceof Array){
     url = webkitAudioContext.orderUrl(url);
-    if (isSafari() || isIe()){
+    if (isSafari || isIe){
       url[0] = url[1];  // make the mp3 the one chosen... since this isn't firefox...
     }
     
