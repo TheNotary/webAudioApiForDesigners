@@ -31,6 +31,7 @@ function initializeNewWebAudioContext() {
 webkitAudioContext.prototype.loadSound = function (url, strNameOfSoundBufferVariable) {
   var request;
   if (url instanceof Array){
+    url = webkitAudioContext.orderUrl(url);
     this.prepareRequest(url[0], strNameOfSoundBufferVariable);
     for (var i = 1; i < url.length; i++){
       this.prepareFallbackRequestForSafari(url[i], strNameOfSoundBufferVariable);
@@ -40,6 +41,18 @@ webkitAudioContext.prototype.loadSound = function (url, strNameOfSoundBufferVari
     this.prepareRequest(url, strNameOfSoundBufferVariable);
   }
 }
+
+
+// private
+// This method ensures that the .ogg is set to the primary audioContext.buffers[] slot and 
+// not the audioContext.fallbackBuffers[] slot
+webkitAudioContext.orderUrl = function (url) {
+  if (url[0].indexOf(".mp3") == -1){
+    return url;
+  }
+  return [url[1], url[0]];  // reverse order of url.  
+}
+
 
 // Private, plz don't call this directly as that it might change over time
 webkitAudioContext.prototype.prepareRequest = function(url, strNameOfSoundBufferVariable) {
@@ -156,7 +169,17 @@ fallbackAudioEntity.prototype.playNew = function() {
 }
 
 fallbackAudioContext.prototype.loadSound = function(url, strNameOfSoundBufferVariable) {
-  this.buffers[strNameOfSoundBufferVariable] = new fallbackAudioEntity(url);
+  if (url instanceof Array){
+    url = webkitAudioContext.orderUrl(url);
+    if (isSafari()){
+      url[0] = url[1];  // make the mp3 the one chosen... since this isn't firefox...
+    }
+    
+    this.buffers[strNameOfSoundBufferVariable] = new fallbackAudioEntity(url[0]);
+  }
+  else{
+    this.buffers[strNameOfSoundBufferVariable] = new fallbackAudioEntity(url);
+  }
 }
 
 // this was needed due to Safari.  
