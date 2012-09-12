@@ -125,12 +125,15 @@ webkitAudioContext.prototype.playSound = function(strBuffer) {
   source.noteOn(0);                          // play the audio source zero seconds from now
 }
 
-
 // check if the browser is Safari...
 function isSafari() {
-  return navigator.vendor.indexOf("Apple") != -1;
+  return navigator.userAgent.indexOf("Safari") != -1;
 }
 
+// IE throws up when we check isSafari...
+function isIe(){
+  return navigator.userAgent.indexOf("MSIE") != -1;
+}
 
 // We need a place to store our audio buffers.  
 // May as well pin them here, directly to the context
@@ -148,8 +151,8 @@ function fallbackAudioContext() {
 
 function fallbackAudioEntity(url) {
   this.audioElement = new Audio(url);  // Place the audio element here
-  // this.audioElement = document.createElement('audio');   // oh my god... Safari 5 doesn't even support Audio tags in the first place...
-  // this.audioElement.setAttribute('src', url);
+  //this.audioElement = document.createElement('audio');   // oh my god... Safari 5 doesn't even support Audio tags in the first place...
+  //this.audioElement.setAttribute('src', url);
   
   this.tracks = {};  // .play() multiple audio elements simultaniously in this tracks collection.  It's gc friendly
   this.audioBufferIndex = 0;  // these help us keep track of the new Audio() elements we create so
@@ -162,6 +165,7 @@ fallbackAudioEntity.prototype.playNew = function() {
   if (typeof(this.tracks[i]) != 'undefined')
     this.tracks[i].src = '';  // minimize memory usage... and smoothness too???
   this.tracks[i] = this.audioElement.cloneNode(true);
+  if (isIe()) { this.tracks[i].src = 'audio/beep.mp3'; } //  lol, IE9s performance is ridiculous, what a waste of time
   this.tracks[i].play();
   
   // this stuff is done to prevent "memory leaking" in browsers, which causes a 
@@ -174,7 +178,7 @@ fallbackAudioEntity.prototype.playNew = function() {
 fallbackAudioContext.prototype.loadSound = function(url, strNameOfSoundBufferVariable) {
   if (url instanceof Array){
     url = webkitAudioContext.orderUrl(url);
-    if (isSafari()){
+    if (isSafari() || isIe()){
       url[0] = url[1];  // make the mp3 the one chosen... since this isn't firefox...
     }
     
