@@ -5,6 +5,12 @@ if (typeof(webkitAudioContext) == "undefined" && typeof(mozAudioContext) == "und
 }
 
 function initializeNewWebAudioContext() {
+  return initializeNewWebAudioContext(false);
+}
+
+// You can initialize with the parameter true to actually enable the audio fallback on
+// IE.  This is not recommended and is subject to change if a later version of this framework is written
+function initializeNewWebAudioContext(enableIe) {
   var context; // this is our web audio context, our way of
                // controlling and keeping track all of our sounds.  
   try {
@@ -17,9 +23,24 @@ function initializeNewWebAudioContext() {
   }
   catch(e) {
     // alert('Web Audio API is not supported in this browser.  HTML 5 Audio Elements will be used instead.');
+    if (isIe() && !enableIe){
+      disableSoundFallback();
+    }
+      
     context = new fallbackAudioContext();
   }
   return context;
+}
+
+
+
+// this is useful for IE...
+function disableSoundFallback(){
+  if(isIe()){
+    alert("Relevant audio is being disabled for your browser, probably because your browser (IE) is not capable of playing back sound at a reasonable latency.  \n\nEven though you are using Microsoft Windows as an Operating system, you are still able to access the web the way the rest of the world can by downloading an alternative browser.  \n\nConsider web searching for:  Opera, Firefox or Chrome.");
+  }
+  
+  fallbackAudioContext.prototype.playSound = function(strBufferName){return;}
 }
 
 // this is a very strange function which asks that you name
