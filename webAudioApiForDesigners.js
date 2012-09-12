@@ -89,7 +89,7 @@ webkitAudioContext.prototype.prepareFallbackRequestForSafari = function(url, str
 
 
 // I almost want to mark this method as private because it's so rediculous that Apple would
-// try to kill .ogg format.  Their decision is harmful to the web.  
+// try to kill .ogg format.  Their decision is reckless and harmful to the web.  
 webkitAudioContext.prototype.loadFallbackSound = function (url, strNameOfSoundBufferVariable) {
   var context = this;
   var request = new XMLHttpRequest();
@@ -148,6 +148,9 @@ function fallbackAudioContext() {
 
 function fallbackAudioEntity(url) {
   this.audioElement = new Audio(url);  // Place the audio element here
+  // this.audioElement = document.createElement('audio');   // oh my god... Safari 5 doesn't even support Audio tags in the first place...
+  // this.audioElement.setAttribute('src', url);
+  
   this.tracks = {};  // .play() multiple audio elements simultaniously in this tracks collection.  It's gc friendly
   this.audioBufferIndex = 0;  // these help us keep track of the new Audio() elements we create so
   this.maxSoundsAtOnce = 32;  // they garbage collect a tiny bit easier
