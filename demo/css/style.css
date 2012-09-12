@@ -1,0 +1,80 @@
+/*
+	 CSS-Tricks Example
+	 by Chris Coyier
+	 http://css-tricks.com
+*/
+
+* { margin: 0; padding: 0; }
+body { font: 14px/1.4 Georgia, serif; }
+
+article, aside, figure, footer, header, hgroup,
+menu, nav, section { display: block; }
+
+header { 
+	 background: black;
+	 color: white;
+	 padding: 80px 0 10px 0;
+}
+
+h1, h2 {
+	font-weight: normal;
+}
+h1 { font-size: 50px; margin: 0 0 10px 0; }
+h2 { font-size: 38px; margin: 0 0 10px 0; }
+p, pre { margin: 0 0 15px 0; }
+
+.inside {
+	width: 960px; 
+	margin: 0 auto; 
+}
+
+section {
+	padding: 20px 0; 
+	overflow: hidden; 
+}
+
+#one {
+	background: #6f4b7c;
+}
+#two {
+	background: #3c7ab5;
+}
+#three {
+	background: #ffeca9;
+}
+
+.nav {
+	width: 120px;
+	float: left;
+	list-style: none;
+}
+.nav li {
+	position: relative;
+}
+.nav a {
+	display: block;
+	padding: 20px;
+	text-decoration: none;
+	color: white;
+	background-image: -moz-linear-gradient(bottom, #444444, #999999); /* FF3.6 */
+	background-image: -o-linear-gradient(bottom, #444444, #999999); /* Opera 11.10+ */
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#444444), to(#999999)); /* Saf4+, Chrome */
+	background-image: -webkit-linear-gradient(bottom, #444444, #999999); /* Chrome 10+, Saf5.1+ */
+}
+.nav a:hover {
+	background: #222;
+}
+
+.nav audio { position: absolute; left: 110%; top: 10px; display: block; height: 30px; width: 200px; }
+
+#page-wrap script {
+	display: block;
+	white-space: pre;
+	background: #333;
+	color: white; 
+	padding: 10px;
+	font: 11px Monaco, MonoSpace;
+	width: 460px;
+	float: right;
+	overflow: auto;
+}
