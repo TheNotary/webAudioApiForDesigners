@@ -29,20 +29,21 @@ function initializeNewWebAudioContext() {
 // The function is complicated by Safari which is a default browser on an OS that
 // has legitamate power, yet doesn't support .ogg for audio.  
 webkitAudioContext.prototype.loadSound = function (url, strNameOfSoundBufferVariable) {
-  var context = this;
   var request;
   if (url instanceof Array){
-    for (var i = 0; i < url.length; i++){
-      webkitAudioContext.prepareRequest(url, strNameOfSoundBufferVariable);
+    this.prepareRequest(url[0], strNameOfSoundBufferVariable);
+    for (var i = 1; i < url.length; i++){
+      this.prepareFallbackRequestForSafari(url[i], strNameOfSoundBufferVariable);
     }
   }
   else{
-    webkitAudioContext.prepareRequest(url, strNameOfSoundBufferVariable);
+    this.prepareRequest(url, strNameOfSoundBufferVariable);
   }
 }
 
 // Private, plz don't call this directly as that it might change over time
-webkitAudioContext.prepareRequest = function(url, strNameOfSoundBufferVariable) {
+webkitAudioContext.prototype.prepareRequest = function(url, strNameOfSoundBufferVariable) {
+  var context = this;
   var request = new XMLHttpRequest();
   request.open('GET', url, true);
   request.responseType = 'arraybuffer';
@@ -51,6 +52,23 @@ webkitAudioContext.prepareRequest = function(url, strNameOfSoundBufferVariable) 
   request.onload = function() {
     context.decodeAudioData(request.response, function(buffer) {
       context.buffers[strNameOfSoundBufferVariable] = buffer; // when finished, put the PCM audio data in the buffer we named
+    }, onError);
+  }
+  request.send();
+}
+
+// Private... Safari...
+// the more I right code for this, the more I hate corporations...
+webkitAudioContext.prototype.prepareFallbackRequestForSafari = function(url, strNameOfSoundBufferVariable) {
+  var context = this;
+  var request = new XMLHttpRequest();
+  request.open('GET', url, true);
+  request.responseType = 'arraybuffer';
+  
+  // Decode asynchronously
+  request.onload = function() {
+    context.decodeAudioData(request.response, function(buffer) {
+      context.fallbackBuffers[strNameOfSoundBufferVariable] = buffer; // when finished, put the PCM audio data in the buffer we named
     }, onError);
   }
   request.send();
@@ -84,7 +102,7 @@ function onError() {
 webkitAudioContext.prototype.playSound = function(strBuffer) {
   var context = this;
   buffer = this.buffers[strBuffer];            // get the audio buffer by it's name
-  if (navigator.vendor.indexOf("Apple") != ""){
+  if (navigator.vendor.indexOf("Apple") != -1){
     buffer = this.fallbackBuffers[strBuffer];  // use the fallbackBuffer if the user is trying to support Safari
   }
   
@@ -94,6 +112,11 @@ webkitAudioContext.prototype.playSound = function(strBuffer) {
   source.noteOn(0);                          // play the audio source zero seconds from now
 }
 
+
+// check if the browser is Safari...
+function isSafari() {
+  return navigator.vendor.indexOf("Apple") != -1;
+}
 
 
 // We need a place to store our audio buffers.  
@@ -108,7 +131,6 @@ webkitAudioContext.prototype.fallbackBuffers = {};
 // In the case of a fallback, html5 audio will be used instead
 function fallbackAudioContext() {
   this.buffers = {};
-  //this.buffersIndecies = {};
 }
 
 function fallbackAudioEntity(url) {
