@@ -10,13 +10,21 @@ if (typeof(webkitAudioContext) == "undefined" && typeof(mozAudioContext) == "und
   window.webkitAudioContext = function(){throw "Web Audio API not supported in this browser";};
 }
 
-function initializeNewWebAudioContext() {
-  return initializeNewWebAudioContext(false);
-}
 
 // You can initialize with the parameter true to actually enable the audio fallback on
 // IE.  This is not recommended and is subject to change if a later version of this framework is written
-function initializeNewWebAudioContext(enableIe) {
+function initializeNewWebAudioContext(options) {
+  // setup the paramerters
+  var enableIe, oneSoundAtATime;
+  if (options != undefined){
+    enableIe = options["enableIE"]; 
+    oneSoundAtATime = options["oneSoundAtATime"];
+  }
+  else{
+    enableIe = false;
+    oneSoundAtATime = true;
+  }
+  
   var context; // this is our web audio context, our way of
                // controlling and keeping track all of our sounds.  
   try {
@@ -34,6 +42,9 @@ function initializeNewWebAudioContext(enableIe) {
     }
       
     context = new fallbackAudioContext();
+  }
+  if (oneSoundAtATime){
+    context.currentlyPlayingAudioSource = {};
   }
   return context;
 }
@@ -141,6 +152,12 @@ function onError() {
 
 webkitAudioContext.prototype.playSound = function(strBuffer) {
   var context = this;
+  
+  // Kill the sound that was played last...
+  if (context.currentlyPlayingAudioSource != undefined && context.currentlyPlayingAudioSource[strBuffer] != undefined){
+    context.currentlyPlayingAudioSource[strBuffer].noteOff(0);
+  }
+  
   buffer = this.buffers[strBuffer];            // get the audio buffer by it's name
   if (navigator.vendor.indexOf("Apple") != -1){
     buffer = this.fallbackBuffers[strBuffer];  // use the fallbackBuffer if the user is trying to support Safari
@@ -150,6 +167,16 @@ webkitAudioContext.prototype.playSound = function(strBuffer) {
   source.buffer = buffer;                    // Give the Source some PCM data to be played
   source.connect(context.destination);       // connect the audio source the speakers
   source.noteOn(0);                          // play the audio source zero seconds from now
+  
+  context.currentlyPlayingAudioSource[strBuffer] = source;  // this allows us to keep track of the sound that was played most recently and stop it arbitrarily
+}
+
+
+// With this magic function, you can stop playing the sound
+webkitAudioContext.prototype.stopSound = function(strBuffer) {
+  var context = this;
+  
+  context.currentlyPlayingAudioSource[strBuffer].noteOff(0);
 }
 
 
@@ -178,6 +205,7 @@ function fallbackAudioEntity(url) {
   this.maxSoundsAtOnce = 32;  // they garbage collect a tiny bit easier
 }
 
+// private, for spinning up a new html5 audio element (we're using the cloneNode method and cloning an new Audio() element)
 fallbackAudioEntity.prototype.playNew = function() {
   var i = this.audioBufferIndex;
   
@@ -193,6 +221,16 @@ fallbackAudioEntity.prototype.playNew = function() {
   if (this.audioBufferIndex >= this.maxSoundsAtOnce)
     this.audioBufferIndex = 0;
 }
+
+// private... for stopping all tracks
+fallbackAudioEntity.prototype.stopAll = function() {
+  for(var i = 0; i < this.maxSoundsAtOnce; i++){
+    if (this.tracks[i] == undefined)
+      continue;
+    this.tracks[i].pause();
+  }
+}
+
 
 fallbackAudioContext.prototype.loadSound = function(url, strNameOfSoundBufferVariable) {
   if (url instanceof Array){
@@ -215,6 +253,10 @@ fallbackAudioContext.prototype.loadFallbackSound = function(url, strNameOfSoundB
 
 fallbackAudioContext.prototype.playSound = function(strBufferName){
   this.buffers[strBufferName].playNew();
+}
+
+fallbackAudioContext.prototype.stopSound = function(strBufferName){
+  this.buffers[strBufferName].stopAll();
 }
 
 
