@@ -207,6 +207,14 @@ function fallbackAudioEntity(url) {
 
 // private, for spinning up a new html5 audio element (we're using the cloneNode method and cloning an new Audio() element)
 fallbackAudioEntity.prototype.playNew = function() {
+  
+  // if the mode is set to playing one sound at a time....  
+  if (context.currentlyPlayingAudioSource != undefined){
+    this.audioElement.src = this.audioElement.src;
+    this.audioElement.play()
+    return;
+  }
+  
   var i = this.audioBufferIndex;
   
   if (typeof(this.tracks[i]) != 'undefined' && !isFireFox)
