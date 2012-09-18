@@ -232,6 +232,7 @@ fallbackAudioEntity.prototype.playNew = function() {
 
 // private... for stopping all tracks
 fallbackAudioEntity.prototype.stopAll = function() {
+  this.audioElement.pause();
   for(var i = 0; i < this.maxSoundsAtOnce; i++){
     if (this.tracks[i] == undefined)
       continue;
