@@ -1,0 +1,28 @@
+Checkout http://css-tricks.com/web-audio-api-sound-on-hover/ for a full writeup.  
+
+
+A web Audio API to make adding sounds to your web app a no brainer, yet take full advantage of Chrome's new web audio API.  
+
+Usage:  
+
+1)  
+Add this script to your project html code.  
+    <script src="/javascripts/webAudioApiForDesigners.js"></script>
+
+2)
+Play a sound using javascript.  
+    // 1
+    var context = initializeNewWebAudioContext();
+
+    // 2
+    context.loadSound('audio/beep.ogg', 'beep');
+
+    $("#nav-one a")
+        .mouseenter(function() {
+        // 3
+        context.playSound('beep');
+    });
+
+For more details, checkout this link to the css-tricks.com
+
+http://css-tricks.com/web-audio-api-sound-on-hover/
