@@ -28,11 +28,11 @@ function initializeNewWebAudioContext(options) {
   var context; // this is our web audio context, our way of
                // controlling and keeping track all of our sounds.  
   try {
-    if (typeof(mozAudioContext) != "undefined") {
-      context = new mozAudioContext();
+	if (typeof(mozAudioContext) != "undefined") {
+		context = new mozAudioContext();
     }
-    else{
-      context = new webkitAudioContext();
+	else{
+		context = new webkitAudioContext();
     }
   }
   catch(e) {
