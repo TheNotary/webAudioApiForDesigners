@@ -1,6 +1,6 @@
-Deprecation Notice:  Howler.JS now exists.  This repo is cool to casually look at to see the WebAudioAPI in action, but Howler.JS is more actively developed and probably tested more robustly than this project.  I happen to like its syntax too as that it's somewhat similar, yet better.  https://github.com/goldfire/howler.js
+Deprecation Notice:  Howler.JS now exists.  My own small and mostly simple repo is still cool to casually look at to see the WebAudioAPI in action, but Howler.JS is more actively developed and probably tested more robustly than this project ever will be (they have 134 forks for god's sake!).  I happen to like the syntax of Howler.JS too as that it's somewhat similar, yet even better than what I came up with originally.  Check it out at https://github.com/goldfire/howler.js
 
-Checkout http://css-tricks.com/web-audio-api-sound-on-hover/ for a full writeup.  
+Checkout http://css-tricks.com/web-audio-api-sound-on-hover/ for a full writeup on this library and the WebAudioAPI.  
 
 
 A web Audio API to make adding sounds to your web app a no brainer, yet take full advantage of Chrome's new web audio API.  
