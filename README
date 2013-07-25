@@ -1,3 +1,5 @@
+Deprication Notice:  Howler.JS now exists.  This repo is cool to casually look at to see the WebAudioAPI in action, but Howler.JS is more actively developed and probably tested more robustly than this project.  I happen to like its syntax too.  https://github.com/goldfire/howler.js
+
 Checkout http://css-tricks.com/web-audio-api-sound-on-hover/ for a full writeup.  
 
 
